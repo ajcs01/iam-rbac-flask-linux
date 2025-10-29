@@ -1,6 +1,6 @@
 import os, json, base64
 from functools import wraps
-from flask import Flask, redirect, session, url_for, abort, render_template_string
+from flask import Flask, redirect, session, url_for, render_template
 from dotenv import load_dotenv
 from authlib.integrations.flask_client import OAuth
 
@@ -27,27 +27,6 @@ keycloak = oauth.register(
         "token_endpoint_auth_method": "none" if CLIENT_SECRET is None else "client_secret_basic",
     },
 )
-
-# ---------- minimal UI ----------
-BASE = """
-<!doctype html><html><head><meta charset="utf-8"><title>CyberRisk App</title>
-<style>
- body{font-family:system-ui;margin:2rem} nav a{margin-right:1rem}
- .btn{border:1px solid #333;border-radius:8px;padding:.35rem .7rem;text-decoration:none}
- .badge{display:inline-block;border:1px solid #888;border-radius:999px;padding:2px 8px;margin-left:6px}
- pre{background:#f6f8fa;padding:1rem;border-radius:8px;overflow:auto}
-</style></head><body>
-<nav>
- <a href="{{ url_for('index') }}">Home</a>
- <a href="{{ url_for('profile') }}">Profile</a>
- <a href="{{ url_for('reports') }}">Reports</a>
- <a href="{{ url_for('admin') }}">Admin</a>
- {% if session.get('user') %}<a class="btn" href="{{ url_for('logout') }}">Logout</a>{% else %}
- <a class="btn" href="{{ url_for('login') }}">Login with Keycloak</a>{% endif %}
-</nav><hr>{{ content|safe }}</body></html>
-"""
-
-def page(html): return render_template_string(BASE, content=html)
 
 # ---------- helpers ----------
 def parse_id_token(id_token: str):
@@ -77,17 +56,28 @@ def require_roles(required: set[str]):
             have = set(user.get("claims", {}).get("_effective_roles", []))
             if have.intersection(required):
                 return fn(*a, **kw)
-            return page("<h3>403 – Access denied</h3><p>You lack the required role.</p>"), 403
+            return render_template(
+                "unauthorized.html",
+                title="Access denied",
+                message="You lack the required role.",
+                required_roles=sorted(required),
+            ), 403
         return wrapper
     return deco
 
 # ---------- routes ----------
 @app.get("/")
 def index():
-    if not session.get("user"):
-        return page("<h2>CyberRisk Reports App</h2><p>Use Keycloak to sign in.</p>")
-    u = session["user"]["claims"].get("preferred_username") or "user"
-    return page(f"<h2>Welcome, <code>{u}</code></h2><p>Try /profile, /reports, /admin.</p>")
+    user = session.get("user")
+    claims = user.get("claims", {}) if user else {}
+    username = claims.get("preferred_username")
+    roles = claims.get("_effective_roles", [])
+    return render_template(
+        "index.html",
+        logged_in=bool(user),
+        username=username or "Cyber analyst",
+        roles=roles or [],
+    )
 
 @app.get("/login")
 def login():
@@ -114,23 +104,46 @@ def profile():
     if not u:
         return redirect(url_for("login"))
     claims = u.get("claims", {})
-    badges = " ".join([f"<span class='badge'>{r}</span>" for r in claims.get("_effective_roles", [])]) or "<em>none</em>"
-    html = f"<h3>Profile & Token Claims</h3><p>Roles: {badges}</p><pre>{json.dumps(claims, indent=2)}</pre>"
-    return page(html)
+    roles = claims.get("_effective_roles", [])
+    return render_template(
+        "profile.html",
+        claims=json.dumps(claims, indent=2),
+        roles=roles,
+        username=claims.get("preferred_username") or "Cyber analyst",
+        email=claims.get("email"),
+        full_name=claims.get("name"),
+    )
 
 @app.get("/reports")
 @require_roles({"admin","analyst"})
 def reports():
-    return page("<h3>Reports</h3><p>Access granted (admin or analyst).</p>")
+    user = session.get("user", {})
+    claims = user.get("claims", {})
+    return render_template(
+        "reports.html",
+        username=claims.get("preferred_username") or "Cyber analyst",
+        roles=claims.get("_effective_roles", []),
+    )
 
 @app.get("/admin")
 @require_roles({"admin"})
 def admin():
-    return page("<h3>Admin</h3><p>Access granted (admin only).</p>")
+    user = session.get("user", {})
+    claims = user.get("claims", {})
+    return render_template(
+        "admin.html",
+        username=claims.get("preferred_username") or "Cyber analyst",
+        roles=claims.get("_effective_roles", []),
+    )
 
 @app.errorhandler(403)
 def forbidden(_):
-    return page("<h3>403 – Access denied</h3>"), 403
+    return render_template(
+        "unauthorized.html",
+        title="403 – Access denied",
+        message="It looks like you do not have permissions for that action.",
+        required_roles=[],
+    ), 403
 
 if __name__ == "__main__":
     app.run(debug=True, port=PORT)

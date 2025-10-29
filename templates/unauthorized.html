@@ -1,1 +1,30 @@
-{% extends 'base.html' %}{% block content %}<p>403 Unauthorized</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Access Denied · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h2>{{ title or "Access denied" }}</h2>
+    <p class="lead">
+      {{ message or "Request blocked by your RBAC policy." }}
+    </p>
+    {% if required_roles %}
+      <div class="notice">
+        <strong>Required role{{ required_roles|length > 1 and 's' or '' }}:</strong>
+        {% for role in required_roles %}
+          <span class="badge">{{ role }}</span>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="notice">
+        <strong>Heads-up:</strong> Reach out to your administrator to request the proper role assignment.
+      </div>
+    {% endif %}
+    <div class="chips" style="margin-top: 1.6rem;">
+      <a class="badge" href="{{ url_for('index') }}">Return to overview</a>
+      {% if session.get('user') %}
+        <a class="badge" href="{{ url_for('logout') }}">Switch account</a>
+      {% else %}
+        <a class="badge" href="{{ url_for('login') }}">Login</a>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

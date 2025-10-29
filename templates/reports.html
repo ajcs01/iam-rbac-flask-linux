@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Reports · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h2>Analytics workspace</h2>
+    <p class="lead">
+      Drill into access telemetry, highlight anomalies, and prep exports for audit teams. Hello, {{ username }}.
+    </p>
+    <div class="chips">
+      {% if roles %}
+        {% for role in roles %}
+          <span class="badge">{{ role }}</span>
+        {% endfor %}
+      {% else %}
+        <span class="empty">No analytical roles detected.</span>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="grid two">
+    <section class="panel">
+      <h2>Signal summary</h2>
+      <p class="description">Synthetic insight tiles to emulate a real telemetry feed.</p>
+      <div class="stat-card">
+        <span class="label">Privilege escalations</span>
+        <span class="value">2 flagged</span>
+        <span class="delta">Cross-team handoff completed in under 15 minutes.</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Dormant accounts</span>
+        <span class="value">5 candidates</span>
+        <span class="delta">Schedule deactivation after business confirmation.</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Policy drift</span>
+        <span class="value">Stable</span>
+        <span class="delta">No variance detected across production realms.</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Compliance snapshot</h2>
+      <p class="description">Keep a finger on audit readiness.</p>
+      <table class="table-lite">
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Status</th>
+            <th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Quarterly access review</td>
+            <td><span class="pill">On track</span></td>
+            <td>Security GRC</td>
+          </tr>
+          <tr>
+            <td>MFA coverage</td>
+            <td><span class="pill">99%</span></td>
+            <td>Identity Core</td>
+          </tr>
+          <tr>
+            <td>Admin credential rotation</td>
+            <td><span class="pill">Due</span></td>
+            <td>Platform Ops</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+{% endblock %}

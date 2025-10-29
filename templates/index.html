@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Overview · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    {% if logged_in %}
+      <h2>Welcome back, {{ username }}.</h2>
+      <p class="lead">
+        All systems are humming. Review your profile, check latest reports, or hop into the admin console to fine tune access policies.
+      </p>
+      <div class="chips">
+        {% if roles %}
+          {% for role in roles %}
+            <span class="badge">{{ role }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="empty">No roles detected – talk to your admin to unlock features.</span>
+        {% endif %}
+      </div>
+    {% else %}
+      <h2>CyberRisk Command Center</h2>
+      <p class="lead">
+        Monitor access, highlight anomalies, and validate RBAC guardrails. Authenticate with Keycloak to activate live dashboards.
+      </p>
+      <div class="notice">
+        <strong>Tip:</strong> Use the Keycloak login above to pull real user claims and evaluate role-based access flows.
+      </div>
+    {% endif %}
+  </section>
+
+  <div class="grid three">
+    <div class="stat-card">
+      <span class="label">Risk posture</span>
+      <span class="value">Low</span>
+      <span class="delta">↓ 6% vs last review</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Active roles</span>
+      <span class="value">{{ roles|length if roles else 0 }}</span>
+      <span class="delta">{% if logged_in %}Synced from Keycloak{% else %}Awaiting login{% endif %}</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Alert queue</span>
+      <span class="value">3 open</span>
+      <span class="delta">2 policy reviews, 1 pending MFA audit</span>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h2>Next best actions</h2>
+    <p class="description">
+      Keep the environment hardened with these focused follow ups.
+    </p>
+    <div class="grid two" style="margin-top: 1.4rem;">
+      <div class="stat-card">
+        <span class="label">Reports</span>
+        <span class="value">Drill-down</span>
+        <span class="delta">Pivot access audit logs and export compliance snapshots.</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Admin</span>
+        <span class="value">Fine control</span>
+        <span class="delta">Delegate privileged tasks, rotate credentials, and broadcast advisories.</span>
+      </div>
+    </div>
+  </section>
+{% endblock %}

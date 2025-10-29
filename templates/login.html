@@ -1,1 +1,13 @@
-{% extends 'base.html' %}{% block content %}<p>Login page</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Login · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h2>Redirecting to Keycloak…</h2>
+    <p class="lead">
+      Sit tight while we hand you off to the identity provider. Once you approve, we will bring you back here with fresh claims.
+    </p>
+    <div class="notice">
+      <strong>Troubleshooting:</strong> If the page does not redirect automatically, ensure Keycloak is running and refresh this view.
+    </div>
+  </section>
+{% endblock %}

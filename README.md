@@ -12,7 +12,7 @@ docker run -p 127.0.0.1:8080:8080 \
   quay.io/keycloak/keycloak:26.4.2 start-dev
 ```
 
-### 2. Setup Flask
+### 2. Setup Flask APP
 ```bash
 cd iam-rbac-flask-linux
 python3 -m venv .venv

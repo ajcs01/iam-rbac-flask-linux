@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Admin Console · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h2>Privileged control board</h2>
+    <p class="lead">
+      Welcome, {{ username }}. These tools help you shape policy, manage escalations, and steer privileged access with confidence.
+    </p>
+    <div class="chips">
+      {% if roles %}
+        {% for role in roles %}
+          <span class="badge">{{ role }}</span>
+        {% endfor %}
+      {% else %}
+        <span class="empty">No administration roles detected.</span>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="grid two">
+    <section class="panel">
+      <h2>Policy operations</h2>
+      <p class="description">Orchestrate fine-grained access quickly.</p>
+      <table class="table-lite">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill">Role review</span></td>
+            <td>Validate that admin access is right-sized and revoke dormant assignments.</td>
+          </tr>
+          <tr>
+            <td><span class="pill">Credential rotation</span></td>
+            <td>Cycle sensitive secrets on a schedule to shrink breach windows.</td>
+          </tr>
+          <tr>
+            <td><span class="pill">Delegation</span></td>
+            <td>Grant temporary elevated rights with expiry baked in.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Advisory feed</h2>
+      <p class="description">Share updates with your security team.</p>
+      <div class="stat-card">
+        <span class="label">Latest broadcast</span>
+        <span class="value">Q3 Controls Review</span>
+        <span class="delta">Highlight adopted RBAC baselines and planned iterations.</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Next window</span>
+        <span class="value">Aug 18 – 21</span>
+        <span class="delta">Maintenance freeze. Pre-approve non-critical changes.</span>
+      </div>
+    </section>
+  </div>
+{% endblock %}

@@ -1,1 +1,343 @@
-<!doctype html><html><body><h1>CyberRisk App</h1>{% block content %}{% endblock %}</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CyberRisk Command Center{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #0c0f1a;
+      --bg-alt: rgba(20, 25, 45, 0.88);
+      --card: rgba(18, 22, 35, 0.94);
+      --primary: #5dd5ff;
+      --accent: #8a7dff;
+      --text: #f4f6ff;
+      --muted: #b6bdd6;
+      --border: rgba(93, 213, 255, .2);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, rgba(93, 213, 255, 0.12), transparent 45%), radial-gradient(circle at right, rgba(138, 125, 255, 0.1), transparent 35%), var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: min(1100px, 92%);
+      margin: 0 auto;
+      padding: 2.5rem 0 3.5rem;
+    }
+
+    header {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.2rem 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 18px 40px rgba(11, 15, 30, 0.25);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    nav a {
+      padding: 0.55rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a.is-active {
+      color: var(--text);
+      border-color: rgba(93, 213, 255, 0.4);
+      background: rgba(93, 213, 255, 0.12);
+      box-shadow: 0 0 12px rgba(93, 213, 255, 0.2);
+    }
+
+    .cta {
+      padding: 0.55rem 1.2rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #05060f;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: transform 0.15s ease;
+    }
+
+    .cta:hover { transform: translateY(-1px); }
+
+    main {
+      margin-top: 2.5rem;
+      display: grid;
+      gap: 1.8rem;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 2rem 2.2rem;
+      box-shadow: 0 24px 50px rgba(5, 7, 16, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(93, 213, 255, 0.18), rgba(138, 125, 255, 0.05));
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .panel h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .panel p.description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(93, 213, 255, 0.3);
+      background: rgba(93, 213, 255, 0.08);
+      color: var(--text);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge::before {
+      content: "●";
+      color: var(--primary);
+      font-size: 0.6rem;
+    }
+
+    pre {
+      margin-top: 1.4rem;
+      background: rgba(8, 11, 20, 0.8);
+      border-radius: 14px;
+      padding: 1.3rem 1.4rem;
+      border: 1px solid rgba(93, 213, 255, 0.08);
+      overflow-x: auto;
+      color: #e0e6ff;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    code {
+      font-family: "Menlo", "Fira Code", "SFMono-Regular", Consolas, monospace;
+      background: rgba(93, 213, 255, 0.1);
+      border-radius: 6px;
+      padding: 0.1rem 0.35rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.2rem;
+    }
+
+    @media (min-width: 820px) {
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card {
+      background: rgba(13, 17, 29, 0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.4rem 1.5rem;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .stat-card span.label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .stat-card span.value {
+      font-size: 1.7rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .stat-card span.delta {
+      font-size: 0.85rem;
+      color: rgba(93, 213, 255, 0.8);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    .table-lite {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.4rem;
+      border: 1px solid rgba(93, 213, 255, 0.08);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .table-lite th,
+    .table-lite td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+    }
+
+    .table-lite th {
+      background: rgba(93, 213, 255, 0.08);
+      color: var(--text);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .table-lite tr:nth-child(even) {
+      background: rgba(13, 17, 29, 0.6);
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(138, 125, 255, 0.16);
+      border: 1px solid rgba(138, 125, 255, 0.32);
+      font-size: 0.75rem;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .notice {
+      background: rgba(93, 213, 255, 0.12);
+      border-radius: 14px;
+      border: 1px solid rgba(93, 213, 255, 0.28);
+      padding: 1rem 1.2rem;
+      margin-top: 1.5rem;
+      color: var(--text);
+    }
+
+    .notice strong {
+      color: var(--primary);
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <h1>CyberRisk Command Center</h1>
+        <span>RBAC Insights</span>
+      </div>
+      <nav>
+        <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}is-active{% endif %}">Overview</a>
+        <a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}is-active{% endif %}">Profile</a>
+        <a href="{{ url_for('reports') }}" class="{% if request.endpoint == 'reports' %}is-active{% endif %}">Reports</a>
+        <a href="{{ url_for('admin') }}" class="{% if request.endpoint == 'admin' %}is-active{% endif %}">Admin</a>
+        {% if session.get('user') %}
+          <a class="cta" href="{{ url_for('logout') }}">↘ Logout</a>
+        {% else %}
+          <a class="cta" href="{{ url_for('login') }}">⚡ Login</a>
+        {% endif %}
+      </nav>
+    </header>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    <footer>
+      <p>CyberRisk RBAC demo · Secure your surface, empower your teams.</p>
+      <p>This demo application was built for the Cyber Risk Management IAM lab.</p>
+      <p>Ali Jaddoa · University of Roehampton · 2025</p>
+    </footer>
+  </div>
+</body>
+</html>

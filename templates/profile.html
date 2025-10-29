@@ -1,1 +1,47 @@
-{% extends 'base.html' %}{% block content %}<p>Profile</p>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Profile · CyberRisk Command Center{% endblock %}
+{% block content %}
+  <section class="panel">
+    <h2>Identity profile</h2>
+    <p class="lead">
+      A snapshot of the authenticated subject pulled directly from Keycloak.
+    </p>
+    <div class="grid two" style="margin-top: 1.4rem;">
+      <div class="stat-card">
+        <span class="label">Display Name</span>
+        <span class="value">{{ full_name or username }}</span>
+        <span class="delta">Preferred username: {{ username }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Primary Email</span>
+        <span class="value">
+          {% if email %}
+            {{ email }}
+          {% else %}
+            <span class="empty">Not provided</span>
+          {% endif %}
+        </span>
+        <span class="delta">Synced from the identity provider</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2rem;">Effective roles</h3>
+    <div class="chips">
+      {% if roles %}
+        {% for role in roles %}
+          <span class="badge">{{ role }}</span>
+        {% endfor %}
+      {% else %}
+        <span class="empty">No roles assigned to this profile.</span>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Raw token claims</h2>
+    <p class="description">
+      Useful when debugging scopes, mapping new Keycloak attributes, or validating RBAC policies.
+    </p>
+    <pre>{{ claims | safe }}</pre>
+  </section>
+{% endblock %}
